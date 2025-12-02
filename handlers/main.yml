@@ -1,0 +1,9 @@
+---
+# roles/auditd_hardening/handlers/main.yml
+
+- name: restart auditd
+  ansible.builtin.systemd:
+    name: auditd
+    state: restarted
+    enabled: true
+

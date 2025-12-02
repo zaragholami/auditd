@@ -1,0 +1,70 @@
+## ============================================================
+##  Auditd Hardening Rules (managed by Ansible)
+##  File: {{ auditd_rules_file }}
+## ============================================================
+
+# Flush existing rules
+-D
+
+# Global settings
+-b {{ auditd_backlog_limit }}
+--backlog_wait_time {{ auditd_backlog_wait_time }}
+
+## =========================
+## Authentication monitoring
+## =========================
+-w /var/log/auth.log -p wa -k authlog
+-w /var/log/secure   -p wa -k authlog
+
+## =========================
+## Sudo monitoring
+## =========================
+-w /var/log/sudo.log -p wa -k sudolog
+
+## =========================
+## User & group changes
+## =========================
+-w /etc/passwd  -p wa -k passwd
+-w /etc/shadow  -p wa -k shadow
+-w /etc/group   -p wa -k group
+-w /etc/gshadow -p wa -k gshadow
+
+## =========================
+## Privilege escalation & exec
+## =========================
+-a always,exit -F arch=b64 -S execve -k exec
+-a always,exit -F arch=b32 -S execve -k exec
+
+## =========================
+## Monitor privileged binaries
+## =========================
+-w /usr/bin/sudo    -p x -k privileged
+-w /usr/bin/passwd  -p x -k privileged
+-w /usr/bin/chsh    -p x -k privileged
+-w /usr/bin/chfn    -p x -k privileged
+
+## =========================
+## Network configuration changes
+## =========================
+-w /etc/hosts -p wa -k network_mod
+-w /etc/sysconfig/network -p wa -k network_mod
+
+## =========================
+## Kernel module load/unload
+## =========================
+-a always,exit -F arch=b64 -S init_module -S delete_module -k kernel_mod
+-a always,exit -F arch=b32 -S init_module -S delete_module -k kernel_mod
+
+## =========================
+## PAM and login configuration changes
+## =========================
+-w /etc/pam.d/       -p wa -k pam_mod
+-w /etc/securetty    -p wa -k securetty_mod
+
+## =========================
+## Custom extra rules (from vars)
+## =========================
+{% if auditd_extra_rules %}
+{{ auditd_extra_rules }}
+{% endif %}
+

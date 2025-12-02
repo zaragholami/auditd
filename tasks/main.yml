@@ -1,0 +1,13 @@
+---
+# roles/auditd_hardening/tasks/main.yml
+
+- name: Include install tasks
+  ansible.builtin.import_tasks: install.yml
+
+- name: Include rules tasks
+  ansible.builtin.import_tasks: rules.yml
+
+- name: Include verify tasks
+  ansible.builtin.import_tasks: verify.yml
+  when: auditd_strict_verify | bool
+

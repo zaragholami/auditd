@@ -1,0 +1,32 @@
+---
+# roles/auditd_hardening/tasks/install.yml
+
+- name: Install auditd on Debian/Ubuntu
+  ansible.builtin.apt:
+    name: "{{ auditd_package_debian }}"
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+  notify: restart auditd
+
+- name: Install auditd on RHEL/Oracle
+  ansible.builtin.yum:
+    name: "{{ auditd_package_redhat }}"
+    state: present
+  when: ansible_os_family == "RedHat"
+  notify: restart auditd
+
+- name: Ensure audit rules directory exists
+  ansible.builtin.file:
+    path: /etc/audit/rules.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Ensure auditd service is enabled & running
+  ansible.builtin.systemd:
+    name: auditd
+    enabled: true
+    state: started
+

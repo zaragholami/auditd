@@ -1,0 +1,14 @@
+- name: Deploy hardening rules from template
+  ansible.builtin.template:
+    src: hardening.rules.j2
+    dest: "{{ auditd_rules_file }}"
+    owner: root
+    group: root
+    mode: "0640"
+  notify: restart auditd
+
+- name: Compile audit rules with augenrules
+  ansible.builtin.command: augenrules --load
+  register: augenrules_output
+  changed_when: "'No change' not in augenrules_output.stdout"
+  notify: restart auditd

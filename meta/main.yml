@@ -1,0 +1,32 @@
+---
+# roles/auditd/meta/main.yml
+
+galaxy_info:
+  role_name: auditd
+  author: ZahraGholami
+  description: Enable and harden Linux auditd with security rules for Debian and RHEL/Oracle.
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+    - name: EL
+      versions:
+        - "7"
+        - "8"
+        - "9"
+  galaxy_tags:
+    - security
+    - hardening
+    - auditd
+    - logging
+    - compliance
+
+dependencies: []
+

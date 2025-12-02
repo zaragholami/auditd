@@ -1,0 +1,10 @@
+- name: Check loaded audit rules
+  ansible.builtin.command: auditctl -l
+  register: auditctl_output
+  changed_when: false
+
+- name: Fail if no audit rules are loaded
+  ansible.builtin.fail:
+    msg: "auditd is running but no rules are loaded (auditctl -l is empty)."
+  when: auditctl_output.stdout is not regex('^-w')
+        and auditctl_output.stdout | trim == ""
